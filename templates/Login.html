@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #b71c1c, #f8f8f8);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 120px; /* Aumentado el tamaño del logo */
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #b71c1c;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #b71c1c;
+            box-shadow: 0 0 5px rgba(183, 28, 28, 0.3);
+        }
+
+        button {
+            background: #b71c1c;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #d32f2f;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .register-link {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .register-link a {
+            color: #b71c1c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            button {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo -->
+        <img class="logo" src="{{ url_for('static', filename='images/logo_empresa.png.png') }}" alt="Logo FLG">
+        <h1>Iniciar Sesión</h1>
+        <form id="loginForm" method="POST">
+            <label for="email">Correo Electrónico</label>
+            <input type="email" id="email" name="email" placeholder="Ingresa tu correo" required oninput="checkEmail()">
+
+            <!-- Campo de contraseña, oculto por defecto -->
+            <div id="passwordField" style="display: none;">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña">
+            </div>
+
+            <button type="submit">Iniciar Sesión</button>
+
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+        </form>
+        <div class="register-link">
+            <p>¿Eres nuevo? <a href="{{ url_for('register') }}">Regístrate aquí</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Credencial del administrador
+        const adminEmail = "admin@example.com";
+
+        function checkEmail() {
+            const emailInput = document.getElementById("email");
+            const passwordField = document.getElementById("passwordField");
+
+            if (emailInput.value.trim().toLowerCase() === adminEmail) {
+                // Mostrar el campo de contraseña si es administrador
+                passwordField.style.display = "block";
+                document.getElementById("password").required = true;
+            } else {
+                // Ocultar el campo de contraseña para usuarios regulares
+                passwordField.style.display = "none";
+                document.getElementById("password").required = false;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #27ae60;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 10px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .logout {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .logout a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logout a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table th {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .btn-download {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .btn-download:hover {
+            background-color: #2ecc71;
+        }
+
+        .section {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .warning {
+            color: orange;
+            text-align: center;
+        }
+
+        .grafico img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .grafico {
+            margin: 20px 0;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: var(--white);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        select, input, button {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        select {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logout">
+            <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+        </div>
+        <h1>Panel de Administración</h1>
+    </header>
+
+    <div class="container">
+        <!-- Filtros de Datos -->
+        <div class="section">
+            <h2>Filtros de Datos</h2>
+            <form method="POST" action="/admin">
+                <label for="fecha_inicio">Fecha de Inicio:</label>
+                <input type="date" id="fecha_inicio" name="fecha_inicio">
+                <label for="fecha_fin">Fecha de Fin:</label>
+                <input type="date" id="fecha_fin" name="fecha_fin">
+                <label for="cliente_nombre">Nombre del Cliente:</label>
+                <input type="text" id="cliente_nombre" name="cliente_nombre" placeholder="Buscar por cliente">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </form>
+        </div>
+
+        <!-- Resumen de Datos -->
+        <div class="section">
+            <h2>Resumen de Datos</h2>
+            {% if resumen_datos is not none and resumen_datos|length > 0 %}
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>Plato</th>
+                            <th>Empresa</th>
+                            <th>Total Consumo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in resumen_datos.values %}
+                        <tr>
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                            <td>{{ row[2] }}</td>
+                            <td>{{ row[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="warning">No hay datos para mostrar en este rango de fechas o con los filtros aplicados.</p>
+            {% endif %}
+        </div>
+
+        <!-- Gráficos Dinámicos -->
+        <div class="section">
+            <h2>Gráficos Dinámicos</h2>
+            {% if graficos %}
+                {% if graficos['consumo_por_cliente'] %}
+                <div class="grafico">
+                    <h3>Consumo por Cliente</h3>
+                    <img src="{{ graficos['consumo_por_cliente'] }}" alt="Gráfico de Consumo por Cliente">
+                </div>
+                {% endif %}
+                {% if graficos['consumo_por_plato'] %}
+                <div class="grafico">
+                    <h3>Distribución por Plato</h3>
+                    <img src="{{ graficos['consumo_por_plato'] }}" alt="Gráfico de Distribución por Plato">
+                </div>
+                {% endif %}
+                {% if graficos['evolucion_pedidos'] %}
+                <div class="grafico">
+                    <h3>Evolución de Pedidos</h3>
+                    <img src="{{ graficos['evolucion_pedidos'] }}" alt="Gráfico de Evolución de Pedidos">
+                </div>
+                {% endif %}
+            {% else %}
+                <p class="warning">No se han generado gráficos para los datos actuales.</p>
+            {% endif %}
+        </div>
+
+        <!-- Resumen Logística -->
+        <div class="section">
+            <h2>Resumen Logística</h2>
+            <form method="POST" action="/admin">
+                <label for="filtro_dia">Seleccionar Día:</label>
+                <select id="filtro_dia" name="filtro_dia">
+                    <option value="">Todos</option>
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Filtrar Logística</button>
+            </form>
+
+            {% if logistica is not none and logistica|length > 0 %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Empresa</th>
+                            <th>Platos y Cantidades</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in logistica.values %}
+                        <tr>
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                            <td>{{ row[2] }}</td>
+                            <td>{{ row[3] }}</td>
+                            <td>{{ row[4] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="text-end">
+                    <a href="{{ url_for('download_logistica_pdf', filtro_dia=request.form.get('filtro_dia', '')) }}" class="btn-download">Descargar PDF</a>
+                </div>
+            {% else %}
+                <p class="warning">No hay información logística para mostrar.</p>
+            {% endif %}
+        </div>
+
+        <!-- Asignación del Menú Semanal -->
+        <div class="section">
+            <h2>Asignar Menú Semanal</h2>
+            <form method="POST" action="/admin">
+                {% for dia in ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"] %}
+                <div class="section">
+                    <h3>{{ dia }}</h3>
+                    <select name="menu_{{ dia }}[]" multiple>
+                        {% for plato in platos %}
+                        <option value="{{ plato }}" {% if plato in menu[dia] %}selected{% endif %}>{{ plato }}</option>
+                        {% endfor %}
+                    </select>
+                    <div>
+                        <input type="text" id="nuevo_plato_{{ dia }}" placeholder="Añadir nuevo plato">
+                        <button type="button" onclick="addPlato('{{ dia }}')">Añadir</button>
+                    </div>
+                </div>
+                {% endfor %}
+                <button type="submit">Guardar Menú</button>
+            </form>
+
+            <script>
+                function addPlato(dia) {
+                    const inputId = `nuevo_plato_${dia}`;
+                    const input = document.getElementById(inputId);
+                    const nuevoPlato = input.value.trim();
+                    if (nuevoPlato) {
+                        const selectName = `menu_${dia}[]`;
+                        const select = document.getElementsByName(selectName)[0];
+                        const option = document.createElement('option');
+                        option.value = nuevoPlato;
+                        option.textContent = nuevoPlato;
+                        option.selected = true;
+                        select.appendChild(option);
+                        input.value = '';
+                    }
+                }
+            </script>
+        </div>
+
+        <!-- Descarga del Resumen Semanal -->
+        <div class="section">
+            <h2>Descargar Resumen Semanal</h2>
+            <div style="text-align: center;">
+                <a href="{{ url_for('download_resumen') }}" class="btn-download">Descargar Resumen Semanal</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

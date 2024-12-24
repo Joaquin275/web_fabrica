@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen del Pedido</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f8f8f8; color: #333; }
+        h1 { color: #b00020; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin: 20px auto; }
+        table th, table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        table th { background-color: #b00020; color: white; }
+        table tr:nth-child(even) { background-color: #f9f9f9; }
+        button, .btn-link { 
+            display: inline-block;
+            background-color: #b00020; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 5px;
+            text-decoration: none; 
+            text-align: center;
+            margin: 10px;
+        }
+        button:hover, .btn-link:hover { background-color: #d32f2f; }
+        .btn-secondary {
+            background-color: #ccc;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background-color: #bbb;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resumen del Pedido</h1>
+
+    <!-- Validar si hay datos en el resumen -->
+    {% if resumen_organizado and resumen_organizado|length > 0 %}
+    <!-- Tabla con todos los datos -->
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre Completo</th>
+                <th>Correo Electronico</th>
+                <th>Telefono</th>
+                <th>Dirección de Envio</th>
+                <th>Empresa</th>
+                <th>Día de la Semana</th>
+                <th>Plato</th>
+                <th>Cantidad</th>
+                <th>Fecha de Entrega</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in resumen_organizado %}
+            <tr>
+                <td>{{ fila['Nombre Completo'] }}</td>
+                <td>{{ fila['Correo electronico'] }}</td>
+                <td>{{ fila['Telefono'] }}</td>
+                <td>{{ fila['Dirección de envio'] }}</td>
+                <td>{{ fila['Empresa'] }}</td>
+                <td>{{ fila['Día de la Semana'] }}</td>
+                <td>{{ fila['Plato'] }}</td>
+                <td>{{ fila['Cantidad'] }}</td>
+                <td>{{ fila['Fecha de Entrega'] }}</td>
+                <td>{{ fila['Observaciones'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+        <form method="POST">
+            <button type="submit">Confirmar Pedido</button>
+        </form>
+        <a href="{{ url_for('menu_route') }}" class="btn-link btn-secondary">Volver al Menú</a>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: red; font-weight: bold;">No se encontraron datos para mostrar.</p>
+    <div class="action-buttons">
+        <a href="{{ url_for('menu_route') }}" class="btn-link btn-secondary">Volver al Menú</a>
+    </div>
+    {% endif %}
+</body>
+</html>
